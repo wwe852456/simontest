@@ -1,52 +1,22 @@
+name: Run on Local Windows Runner
 
-name: Deploy to Windows B
-
+# 當你推送到 main 或 master 分支時觸發
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
-
-permissions:
-  contents: read
-
-concurrency:
-  group: deploy-windows-b
-  cancel-in-progress: false
+    branches: [ "main", "master" ]
 
 jobs:
-  deploy:
-    runs-on: [self-hosted, Windows, X64, windows-b]
-
-    defaults:
-      run:
-        shell: powershell
+  build:
+    # 關鍵：指定使用你剛才設定的本地 Runner (self-hosted)
+    runs-on: self-hosted
 
     steps:
-      - name: Checkout GitHub Code
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+    - name: 1. 檢查程式碼 (Checkout)
+      uses: actions/checkout@v4
 
-      - name: Deploy to B Computer
-        run: |
-          $source = $env:GITHUB_WORKSPACE
-          $target = "G:\Code\aaa\simontest"
-
-          New-Item -ItemType Directory `
-            -Force -Path $target | Out-Null
-
-          robocopy $source $target /MIR `
-            /XD .git .github `
-            /R:2 /W:2
-
-          if ($LASTEXITCODE -ge 8) {
-            throw "Robocopy failed: $LASTEXITCODE"
-          }
-
-          exit 0
-
-      - name: Show Deployment Result
-        run: |
-          Write-Host "Deployment completed"
-          Write-Host "Commit: $env:GITHUB_SHA"
+    - name: 2. 執行 Windows 測試指令
+      run: |
+        echo "Hello from my local Windows 11 host!"
+        echo "當前專案資料夾內容："
+        dir
+        dotnet --version
