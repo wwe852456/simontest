@@ -1,22 +1,21 @@
-name: Run on Local Windows Runner
+name: Deploy to Windows B
 
-# 當你推送到 main 或 master 分支時觸發
 on:
   push:
-    branches: [ "main", "master" ]
+    branches:
+      - main
 
 jobs:
   build:
-    # 關鍵：指定使用你剛才設定的本地 Runner (self-hosted)
     runs-on: self-hosted
 
     steps:
-    - name: 1. 檢查程式碼 (Checkout)
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: 2. 執行 Windows 測試指令
-      run: |
-        echo "Hello from my local Windows 11 host!"
-        echo "當前專案資料夾內容："
-        dir
-        dotnet --version
+      - name: Verify files
+        shell: powershell
+        run: |
+          Write-Host "GitHub Actions started"
+          Get-Location
+          Get-ChildItem
